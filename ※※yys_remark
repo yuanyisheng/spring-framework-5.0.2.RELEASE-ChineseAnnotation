@@ -1,0 +1,9 @@
+
+gp-【课堂笔记】一步一步手绘Spring IOC运行时序图文档-问题记录：
+
+
+基于Xml的IOC容器的初始化
+
+    6、分配路径处理策略
+
+        AbstractRefreshableConfigApplicationContext 改为 AbstractRefreshableApplicationContext
