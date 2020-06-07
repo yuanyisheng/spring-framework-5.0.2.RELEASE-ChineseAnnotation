@@ -69,6 +69,10 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
 			ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
 
+
+		// TODO：9、准备文档对象
+		// (yys)DocumentLoader将Bean配置资源转换成Document对象的源码如下：
+
 		//创建文件解析器工厂
 		DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
 		if (logger.isDebugEnabled()) {
@@ -90,6 +94,11 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	 */
 	protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
 			throws ParserConfigurationException {
+
+		// TODO：yys
+		// (yys)方法中的解析过程是调用JavaEE标准的JAXP标准进行处理
+		// (yys)至此Spring IOC容器根据定位的Bean配置信息，将其加载读入并转换成为Document对象完成
+		// (yys)接下来我们分析Spring IOC容器将载入Bean配置信息转换为Document对象之后，是如何将其解析为Spring IOC管理的对象并将其注册到容器中的
 
 		//创建文档解析工厂
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

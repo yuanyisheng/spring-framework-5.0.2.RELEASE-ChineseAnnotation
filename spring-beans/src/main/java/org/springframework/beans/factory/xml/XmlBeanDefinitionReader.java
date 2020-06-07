@@ -337,6 +337,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 				if (encodedResource.getEncoding() != null) {
 					inputSource.setEncoding(encodedResource.getEncoding());
 				}
+
+				// TODO：yys
+				// (yys)这里是具体的读取过程
+
 				//这里是具体的读取过程
 				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
 			}
@@ -395,8 +399,17 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		try {
+
+			// TODO：yys
+			// (yys)通过源码分析，载入Bean配置信息的最后一步是将Bean配置信息转换为Document对象，该过程由documentLoader实现
+
 			//将XML文件转换为DOM对象，解析过程由documentLoader实现
 			Document doc = doLoadDocument(inputSource, resource);
+
+			// TODO：10、分配解析策略
+			// (yys)XmlBeanDefinitionReader 类中的 doLoadBeanDefinition()方法是从特定 XML 文件中实际载入 Bean 配置资源的方法，该方法在载入 Bean 配置资源之后将其转换为 Document 对象
+			// (yys)接下来调用registerBeanDefinitions()方法启动SpringIOC容器对Bean定义的解析过程
+
 			//这里是启动对Bean定义解析的详细过程，该解析过程会用到Spring的Bean配置规则
 			return registerBeanDefinitions(doc, resource);
 		}
@@ -513,13 +526,26 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	//按照Spring的Bean语义要求将Bean定义资源解析并转换为容器内部数据结构
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+
+		// TODO：yys
+		// (yys)Bean配置资源的载入解析分为两个步骤：
+		// (yys)1.首先，通过XML解析器将Bean配置信息转换得到Document对象，但这些Bean并没有按照Spring的Bean规则进行解析，这一步是载入的过程
+		// (yys)2.其次，在完成通用的XML解析之后，按照spring Bean的定义规则对Document对象进行解析，
+		// (yys)其解析过程是在接口BeanDefinitionDocumentReader 的实现类 DefaultBeanDefinitionDocumentReader 中实现
+
+
 		//得到BeanDefinitionDocumentReader来对xml格式的BeanDefinition解析
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		//获得容器中注册的Bean数量
 		int countBefore = getRegistry().getBeanDefinitionCount();
+
+		// TODO：11、将配置载入内存
+		// (yys)BeanDefinitionDocumentReader接口通过registerBeanDefinitions()方法调用其实现类DefaultBeanDefinitionDocumentReader对Document对象进行解析
+
 		//解析过程入口，这里使用了委派模式，BeanDefinitionDocumentReader只是个接口,
 		//具体的解析实现过程有实现类DefaultBeanDefinitionDocumentReader完成
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+
 		//统计解析的Bean数量
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}

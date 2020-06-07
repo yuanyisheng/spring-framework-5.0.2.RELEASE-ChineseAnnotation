@@ -137,6 +137,10 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 */
 	//Xml Bean读取器加载Bean定义资源
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+
+		// TODO：yys
+		// (yys)由于我们使用ClassPathXmlApplicationContext作为例子，因此getConfigResources()的返回值为null,因此程序执行 reader.loadBeanDefinitions(configLocations)分支
+
 		//获取Bean定义资源的定位
 		Resource[] configResources = getConfigResources();
 		if (configResources != null) {

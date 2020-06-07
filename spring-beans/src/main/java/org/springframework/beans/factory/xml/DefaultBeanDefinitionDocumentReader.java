@@ -92,6 +92,16 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	//根据Spring DTD对Bean的定义规则解析Bean定义Document对象
 	@Override
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
+
+		// TODO：yys
+		// (yys)通过上述 Spring IOC 容器对载入的 Bean 定义 Document 解析可以看出，我们使用 Spring 时，在
+		// (yys)Spring 配置文件中可以使用<import>元素来导入 IOC 容器所需要的其他资源，Spring IOC 容器在解
+		// (yys)析时会首先将指定导入的资源加载进容器中。使用<ailas>别名时，Spring IOC 容器首先将别名元素所定义的别名注册到容器中
+		// (yys)对于既不是<import>元素，又不是<alias>元素的元素，即 Spring 配置文件中普通的<bean>元素的
+		// (yys)解析由 BeanDefinitionParserDelegate 类的 parseBeanDefinitionElement()方法来实现。这个解析的
+		// (yys)过程非常复杂，我们在 mini 版本的时候，就用 properties 文件代替了
+
+
 		//获得XML描述符
 		this.readerContext = readerContext;
 		logger.debug("Loading bean definitions");
@@ -129,6 +139,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
 
+		// TODO：yys
+		// this.delegate = createDelegate(getReaderContext(), root, parent);
+
 		//具体的解析过程由BeanDefinitionParserDelegate实现，
 		//BeanDefinitionParserDelegate中定义了Spring Bean定义XML文件的各种元素
 		BeanDefinitionParserDelegate parent = this.delegate;
@@ -151,6 +164,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 		//在解析Bean定义之前，进行自定义的解析，增强解析过程的可扩展性
 		preProcessXml(root);
+
+		// TODO：yys
+		// parseBeanDefinitions(root, this.delegate);
+
 		//从Document的根元素开始进行Bean定义的Document对象
 		parseBeanDefinitions(root, this.delegate);
 		//在解析Bean定义之后，进行自定义的解析，增加解析过程的可扩展性
@@ -187,6 +204,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 					Element ele = (Element) node;
 					//Bean定义的Document的元素节点使用的是Spring默认的XML命名空间
 					if (delegate.isDefaultNamespace(ele)) {
+
+						// TODO：yys
+						// parseDefaultElement(ele, delegate);
+
 						//使用Spring的Bean规则解析元素节点
 						parseDefaultElement(ele, delegate);
 					}
@@ -209,15 +230,27 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
 		//如果元素节点是<Import>导入元素，进行导入解析
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
+
+			// TODO：yys
+			// importBeanDefinitionResource(ele);
+
 			importBeanDefinitionResource(ele);
 		}
 		//如果元素节点是<Alias>别名元素，进行别名解析
 		else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
+
+			// TODO：yys
+			// processAliasRegistration(ele);
+
 			processAliasRegistration(ele);
 		}
 		//元素节点既不是导入元素，也不是别名元素，即普通的<Bean>元素，
 		//按照Spring的Bean规则解析元素
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
+
+			// TODO：yys
+			// processBeanDefinition(ele, delegate);
+
 			processBeanDefinition(ele, delegate);
 		}
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
@@ -351,6 +384,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	//解析Bean定义资源Document对象的普通元素
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+
+		// TODO：12、载入<bean>元素
+		// (yys)Bean 配置信息中的<import>和<alias>元素解析在 DefaultBeanDefinitionDocumentReader 中已
+		// (yys)经完成，对 Bean 配置信息中使用最多的<bean>元素交由 BeanDefinitionParserDelegate 来解析，
+
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		// BeanDefinitionHolder是对BeanDefinition的封装，即Bean定义的封装类
 		//对Document对象中<Bean>元素的解析由BeanDefinitionParserDelegate实现
@@ -358,6 +396,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		if (bdHolder != null) {
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
+
+				// TODO：16、分配注册策略
+				// (yys)让我们继续跟踪程序的执行顺序，接下来我们来分析 DefaultBeanDefinitionDocumentReader 对
+				// (yys)Bean 定 义转 换的 Document 对 象解 析的 流程 中， 在其 parseDefaultElement() 方 法中 完成对
+				// (yys)Document 对 象 的 解 析 后 得 到 封 装 BeanDefinition 的 BeanDefinitionHolder对象(holder:持有者)，然后调用
+				// (yys)BeanDefinitionReaderUtils 的 registerBeanDefinition()方法向IOC容器注册解析的 Bean ，
+				// (yys)BeanDefinitionReaderUtils 的注册的源码如下:
+
 				// Register the final decorated instance.
 				//向Spring IOC容器注册解析得到的Bean定义，这是Bean定义向IOC容器注册的入口
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());

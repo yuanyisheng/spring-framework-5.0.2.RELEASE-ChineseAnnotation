@@ -7,3 +7,41 @@ gp-【课堂笔记】一步一步手绘Spring IOC运行时序图文档-问题记
     6、分配路径处理策略
 
         AbstractRefreshableConfigApplicationContext 改为 AbstractRefreshableApplicationContext
+
+
+
+1、BeanFactory
+
+    典型的工厂模式，这一系列的Bean工厂，也即IOC容器为开发者管理对象间的依赖关系提供基础服务，定义了IOC容器的基本功能规范
+
+2、BeanDefinition
+
+    SpringIOC容器管理我们定义的各种Bean对象及相互的关系，Bean对象在Spring实现中以BeanDefinition来描述的
+
+3、BeanDefinitionReader
+
+    Bean的解析主要对Spirng配置文件解析，这个解析过程主要通过BeanDefinitionReader来完成
+
+一、基于Xml的IOC容器的初始化
+
+    1.寻找入口
+    2.获取配置路径
+    3.开始启动
+    4.创建容器
+    5.载入配置路径
+    6.分配路径处理策略
+    7.解析配置文件路径
+    8.开始读取配置内容
+    9.准备文档对象
+    10.分配解析策略
+    11.将配置载入内存
+    12.载入<bean>元素
+    13.载入<property>元素
+    14.载入<property>子元素
+    15.载入<list>元素
+    16.分配注册策略
+    17.向容器注册
+
+
+
+

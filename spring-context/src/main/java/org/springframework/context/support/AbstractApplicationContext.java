@@ -519,7 +519,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	// TODO：yys
 	// (yys)refresh()方法主要为IOC容器Bean的生命周期管理提供条件，springIOC容器载入Bean配置信息从子类容器的refreshBeanFactory()方法启动
-	// (yys)整个refresh()方法中 步骤2，之后步骤都是注册容器的信息源和生命周期事件，而前面说的《载入》就是从步骤2开始启动的
+	// (yys)整个refresh()方法中 步骤2(obtainFreshBeanFactory())，之后步骤都是注册容器的信息源和生命周期事件，而前面说的《载入》就是从步骤2开始启动的
 	// (yys)refresh()方法主要作用:在创建IOC容器前，如已有容器存在，则需要先将已有容器销毁关闭再重新创建，以保证在refresh()方法后使用的新建立起来的IOC容器
 	// (yys)类似于对IOC容器的重启，在新建立的容器中对容器进行初始化，对Bean配置资源进行载入
 

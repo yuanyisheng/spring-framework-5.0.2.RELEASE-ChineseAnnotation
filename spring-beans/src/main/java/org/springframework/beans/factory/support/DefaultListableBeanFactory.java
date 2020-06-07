@@ -759,6 +759,15 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {
 
+
+		// TODO：17、向容器注册
+		// (yys)DefaultListableBeanFactory中使用一个Map(ConcurrentHashMap)的集合对象(beanDefinitionMap)存放IOC容器中注册解析的Definition
+
+		// (yys)至此，Bean 配置信息中配置的 Bean 被解析过后，已经注册到IOC容器中，被容器管理起来，真正完成了IOC容器初始化所做的全部工作。
+		// (yys)现在 IOC 容器中已经建立了整个 Bean 的配置信息，这些BeanDefinition 信息已经可以使用，并且可以被检索
+		// (yys)IOC 容器的作用就是对这些注册的 Bean 定义信 息进行处理和维护
+		// (yys)这些的注册的 Bean 定义信息是 IOC 容器控制反转的基础，正是有了这些注册的数据，容器才可以进行依赖注入
+
 		Assert.hasText(beanName, "Bean name must not be empty");
 		Assert.notNull(beanDefinition, "BeanDefinition must not be null");
 

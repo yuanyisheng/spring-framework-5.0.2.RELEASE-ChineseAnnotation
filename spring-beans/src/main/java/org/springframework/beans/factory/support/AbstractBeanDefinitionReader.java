@@ -231,11 +231,18 @@ public abstract class AbstractBeanDefinitionReader implements EnvironmentCapable
 		if (resourceLoader instanceof ResourcePatternResolver) {
 			// Resource pattern matching available.
 			try {
+
+				// TODO：第七步，所以在DefaultResourceLoader.getResource()中
+
 				//将指定位置的Bean定义资源文件解析为Spring IOC容器封装的资源
 				//加载多个指定位置的Bean定义资源文件
 				Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+
+
+				// TODO：8、开始读取配置内容
 				//委派调用其子类XmlBeanDefinitionReader的方法，实现加载功能
 				int loadCount = loadBeanDefinitions(resources);
+
 				if (actualResources != null) {
 					for (Resource resource : resources) {
 						actualResources.add(resource);

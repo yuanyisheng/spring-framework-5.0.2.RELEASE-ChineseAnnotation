@@ -370,6 +370,17 @@ public class BeanDefinitionParserDelegate {
 	//解析<Bean>元素的入口
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
+
+		// TODO：yys
+		// (yys)只要使用过 Spring，对 Spring 配置文件比较熟悉的人，通过对上述源码的分析，就会明白我们在 Spring
+		// (yys)配置文件中<Bean>元素的中配置的属性就是通过该方法解析和设置到 Bean 中去的
+		// (yys)注意：
+		// (yys)在解析<Bean>元素过程中没有创建和实例化 Bean 对象，只是创建了 Bean 对象的定义类
+		// (yys)BeanDefinition，将<Bean>元素中的配置信息设置到 BeanDefinition 中作为记录，当依赖注入时才
+		// (yys)使用这些记录信息创建和实例化具体的 Bean 对象
+		// (yys)上面方法中一些对一些配置如元信息(meta)、qualifier 等的解析，我们在 Spring 中配置时使用的也不
+		// (yys)多，我们在使用 Spring 的<Bean>元素时，配置最多的是<property>属性，因此我们下面继续分析源码，了解 Bean 的属性在解析时是如何设置的
+
 		return parseBeanDefinitionElement(ele, null);
 	}
 
@@ -522,8 +533,17 @@ public class BeanDefinitionParserDelegate {
 
 			//解析<Bean>元素的构造方法设置
 			parseConstructorArgElements(ele, bd);
+
+			// TODO：13、载入<property>元素
+			// (yys)通过方法源码分析，我们可以了解在Spring配置文件中，<Bean>元素中<Property>元素相关的配置是如何处理的：
+			// (yys)1.ref被封装为指向依赖对象一个引用
+			// (yys)2.value配置都会封装成一个字符串类型的对象
+			// (yys)3.ref和value都通过“解析的数据类型属性值.setSource(extractSource(ele));”方法将属性值/引用与所引用的对象关联起来
+			// (yys)  在方法的最后对于<Property>元素的子元素通过parsePropertySubElement()方法解析，我们继续分析该方法的源码，了解其解析过程
+
 			//解析<Bean>元素的<property>设置
 			parsePropertyElements(ele, bd);
+
 			//解析<Bean>元素的qualifier属性
 			parseQualifierElements(ele, bd);
 
@@ -852,6 +872,10 @@ public class BeanDefinitionParserDelegate {
 				error("Multiple 'property' definitions for property '" + propertyName + "'", ele);
 				return;
 			}
+
+			// TODO：yys
+			// parsePropertyValue(ele, bd, propertyName);
+
 			//解析获取property的值
 			Object val = parsePropertyValue(ele, bd, propertyName);
 			//根据property的名字和值创建property实例
@@ -972,6 +996,14 @@ public class BeanDefinitionParserDelegate {
 		}
 		//如果当前<property>元素还有子元素
 		else if (subElement != null) {
+
+			// TODO：14、载入<property>的子元素
+			// (yys)通过上述源码分析，我们明白了在 Spring 配置文件中，对<property>元素中配置的 array、list、set、
+			// (yys)map、prop 等各种集合子元素的都通过上述方法解析，生成对应的数据对象，比如 ManagedList、
+			// (yys)ManagedArray、ManagedSet 等，这些 Managed 类是 Spring 对象 BeanDefiniton 的数据封装，对
+			// (yys)集合数据类型的具体解析有各自的解析方法实现，解析方法的命名非常规范，一目了然，我们对<list>
+			// (yys)集合元素的解析方法进行源码分析，了解其实现过程
+
 			//解析<property>的子元素
 			return parsePropertySubElement(subElement, bd);
 		}
@@ -1058,6 +1090,16 @@ public class BeanDefinitionParserDelegate {
 		}
 		//如果子元素是<list>，使用解析list集合子元素的方法解析
 		else if (nodeNameEquals(ele, LIST_ELEMENT)) {
+
+			// TODO：15、载入<list>的子元素
+			// (yys)经过对 Spring Bean 配置信息转换的 Document 对象中的元素层层解析，Spring IOC 现在已经将 XML
+			// (yys)形式定义的 Bean 配置信息转换为 Spring IOC 所识别的数据结构——BeanDefinition，它是 Bean 配
+			// (yys)置信息中配置的 POJO 对象在 Spring IOC 容器中的映射，我们可以通过 AbstractBeanDefinition 为
+			// (yys)入口，看到了 IOC 容器进行索引、查询和操作。
+			// (yys)通过 Spring IOC 容器对 Bean 配置资源的解析后，IOC 容器大致完成了管理 Bean 对象的准备工作，
+			// (yys)即初始化过程，但是最为重要的依赖注入还没有发生，现在在 IOC 容器中 BeanDefinition 存储的只是
+			// (yys)一些静态信息，接下来需要向容器注册 Bean 定义信息才能全部完成 IOC 容器的初始化过程
+
 			return parseListElement(ele, bd);
 		}
 		//如果子元素是<set>，使用解析set集合子元素的方法解析

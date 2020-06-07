@@ -142,6 +142,11 @@ public class DefaultResourceLoader implements ResourceLoader {
 	//获取Resource的具体实现方法
 	@Override
 	public Resource getResource(String location) {
+
+		// TODO：7、解析配置文件路径
+		// (yys)DefaultResourceLoader提供getResourceByPath()方法的实现，
+		// (yys)就是为了处理既不是classpath表示，又不是URL标识的Resource的定位这种情况
+
 		Assert.notNull(location, "Location must not be null");
 
 		for (ProtocolResolver protocolResolver : this.protocolResolvers) {
@@ -185,6 +190,14 @@ public class DefaultResourceLoader implements ResourceLoader {
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext#getResourceByPath
 	 */
 	protected Resource getResourceByPath(String path) {
+
+		// TODO：yys
+		// (yys)点进去，我们发现是在ClassPathResource类中完成了对整个路径的解析
+		// (yys)这样，就可以从类路径上对IOC配置文件进行加载，当然我们可以按照这个逻辑从任何地方加载，
+		// (yys)在spring中我们看到它提供各种资源抽象，比如：ClassPathResource、URLResource、FileResource等供我们使用
+		// (yys)这里我们看到的是定位Resource的一个过程，而这只是加载过程的一部分，
+		// (yys)eg：FileSystemXmlApplicatino容器就重写了getResourceByPath()方法，通过子类的覆盖，巧妙地完成了将类路径变为文件路径的转换
+
 		return new ClassPathContextResource(path, getClassLoader());
 	}
 

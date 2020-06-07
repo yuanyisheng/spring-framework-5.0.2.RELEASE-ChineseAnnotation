@@ -149,6 +149,11 @@ public class BeanDefinitionReaderUtils {
 		// Register bean definition under primary name.
 		//获取解析的BeanDefinition的名称
 		String beanName = definitionHolder.getBeanName();
+
+		// TODO：yys
+		// (yys)当调用 BeanDefinitionReaderUtils 向 IOC 容器注册解析的 BeanDefinition 时
+		// (yys)真正完成注册功能的是 DefaultListableBeanFactory
+
 		//向IOC容器注册BeanDefinition
 		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
 
