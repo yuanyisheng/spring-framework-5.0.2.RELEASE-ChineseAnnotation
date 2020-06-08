@@ -423,6 +423,9 @@ public class BeanDefinitionParserDelegate {
 			checkNameUniqueness(beanName, aliases, ele);
 		}
 
+		// TODO：yys
+		// (yys)parseBeanDefinitionElement(ele, beanName, containingBean)
+
 		//详细对<Bean>元素中配置的Bean定义进行解析的地方
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {

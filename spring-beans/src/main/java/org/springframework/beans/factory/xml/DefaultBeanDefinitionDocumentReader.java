@@ -98,7 +98,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// (yys)Spring 配置文件中可以使用<import>元素来导入 IOC 容器所需要的其他资源，Spring IOC 容器在解
 		// (yys)析时会首先将指定导入的资源加载进容器中。使用<ailas>别名时，Spring IOC 容器首先将别名元素所定义的别名注册到容器中
 		// (yys)对于既不是<import>元素，又不是<alias>元素的元素，即 Spring 配置文件中普通的<bean>元素的
-		// (yys)解析由 BeanDefinitionParserDelegate 类的 parseBeanDefinitionElement()方法来实现。这个解析的
+		// (yys)解析由 BeanDefinitionParserDelegate(解析器/委派) 类的 parseBeanDefinitionElement()方法来实现。这个解析的
 		// (yys)过程非常复杂，我们在 mini 版本的时候，就用 properties 文件代替了
 
 
