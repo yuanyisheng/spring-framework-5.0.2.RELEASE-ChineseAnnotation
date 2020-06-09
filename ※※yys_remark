@@ -1,29 +1,61 @@
 
-gp-【课堂笔记】一步一步手绘Spring IOC运行时序图文档-问题记录：
+----------------------------------------------------------- 对应文档问题记录 -----------------------------------------------------------
+--
+--gp-【课堂笔记】一步一步手绘Spring IOC运行时序图文档-问题记录：
+--
+--
+--基于Xml的IOC容器的初始化
+--
+--    6、分配路径处理策略
+--
+--        AbstractRefreshableConfigApplicationContext 改为 AbstractRefreshableApplicationContext
+--
+----------------------------------------------------------- 对应文档问题记录 -----------------------------------------------------------
 
 
-基于Xml的IOC容器的初始化
-
-    6、分配路径处理策略
-
-        AbstractRefreshableConfigApplicationContext 改为 AbstractRefreshableApplicationContext
 
 
 
-1、BeanFactory
-
-    典型的工厂模式，这一系列的Bean工厂，也即IOC容器为开发者管理对象间的依赖关系提供基础服务，定义了IOC容器的基本功能规范
-
-2、BeanDefinition
-
-    SpringIOC容器管理我们定义的各种Bean对象及相互的关系，Bean对象在Spring实现中以BeanDefinition来描述的
-
-3、BeanDefinitionReader
-
-    Bean的解析主要对Spirng配置文件解析，这个解析过程主要通过BeanDefinitionReader来完成
+----------------------------------------------------------- 源码剖析〓IOC初始化〓 -----------------------------------------------------------
+----------------------------------------------------------- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -----------------------------------------------------------
 
 
-一、IOC容器初始化
+一、IOC容器初始化 - 关键类
+
+	1、BeanFactory：定义了 IOC 容器的基本功能规范
+	                典型的工厂模式，这一系列的Bean工厂，也即IOC容器为开发者管理对象间的依赖关系提供基础服务，定义了IOC容器的基本功能规范
+
+		1.三个重要常用的子类：
+
+			ListableBeanFactory
+			HierarchicalBeanFactory 海 rua k kou (K.O 的 K)
+			AutowireCapableBeanFactory k 破 bou
+
+			在类图中发现最终的实现类是 DefaultListableBeanFactory，它实现了所有的接口
+
+		2.为什么定义这么多层级的接口?
+
+			查阅过源码会知道，每个接口都有其使用的场合，主要是为了区分在spring内部操作过程中
+			对对象的数据访问所做的限制
+
+			eg:ListableBeanFactory接口表示这些Bean是可列表化的
+			   HierarchicalBeanFactory接口表示的是这些Bean是有继承关系的，也就是每个Bean都可能有父Bean
+			   AutowireCapableBeanFactory接口定义了Bean的自动装配规则
+
+			   这三个接口共同定义了Bean的集合、Bean之间的关系，以及Bean的行为
+
+
+	2、BeanDefinition：用于描述一个bean实例的属性及构造参数等元数据 dai fei nei 神
+	                   SpringIOC容器管理我们定义的各种Bean对象及相互的关系，Bean对象在Spring实现中以BeanDefinition来描述的
+
+
+	3、BeanDefinitionReader：Bean的解析主要就是对 Spring 配置文件的解析
+	                         Bean的解析主要对Spirng配置文件解析，这个解析过程主要通过BeanDefinitionReader来完成
+
+
+
+
+二、IOC容器初始化 - 初始化过程
 
     1、基于Xml的IOC容器的初始化
 
@@ -46,53 +78,62 @@ gp-【课堂笔记】一步一步手绘Spring IOC运行时序图文档-问题记
         17.向容器注册
 
 
-二、依赖注入DI-执行细节
+    2、基于Annotation的IOC容器初始化
 
-    1.寻找入口
-    2.开始实例化
-    3.选择实例化策略
-    4.执行实例化
-    5.准备依赖注入
-    6.解析注入规则
-    7.注入赋值
+        **这里的序号定义，并不是执行顺序
 
+        1.定位Bean扫描路径
+            整体针对基于Annotation的IOC容器初始化的流程
 
----------------------------------------------------------------- spring源码剖析 ----------------------------------------------------------------
----------------------------------------------------------------- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓ ----------------------------------------------------------------
+        2.读取 Annotation 元数据
+            当创建注解处理容器时，如果传入的初始参数是具体的注解 Bean 定义类时，注解容器读取并注册
 
+        3.扫描指定包并解析为 BeanDefinition
+            当创建注解处理容器时，如果传入的初始参数是注解 Bean 定义类所在的包时，注解容器将扫描给定的 包及其子包，将扫描到的注解 Bean 定义载入并注册
 
-一、IOC容器初始化-关键类
-
-	1、BeanFactory：定义了 IOC 容器的基本功能规范
-
-		1.三个重要常用的子类：
-
-			ListableBeanFactory
-			HierarchicalBeanFactory 海 rua k kou (K.O 的 K)
-			AutowireCapableBeanFactory k 破 bou
-
-			在类图中发现最终的实现类是 DefaultListableBeanFactory，它实现了所有的接口
-
-		2.为什么定义这么多层级的接口?
-
-			查阅过源码会知道，每个接口都有其使用的场合，主要是为了区分在spring内部操作过程中
-			对对象的数据访问所做的限制
-
-			eg:ListableBeanFactory接口表示这些Bean是可列表化的
-			   HierarchicalBeanFactory接口表示的是这些Bean是有继承关系的，也就是每个Bean都可能有父Bean
-			   AutowireCapableBeanFactory接口定义了Bean的自动装配规则
-
-			   这三个接口共同定义了Bean的集合、Bean之间的关系，以及Bean的行为
+        4.注册注解 BeanDefinition
+            AnnotationConfigWebApplicationContext 是 AnnotationConfigApplicationContext 的 Web 版， 它们对于注解 Bean 的注册和扫描是基本相同的，
+            但是 AnnotationConfigWebApplicationContext 对注解 Bean 定义的载入稍有不同
 
 
-	2、BeanDefinition：用于描述一个bean实例的属性及构造参数等元数据
 
-		dai fei nei 神
+三、总结 - (IOC容器初始化基本步骤)
 
-	3、BeanDefinitionReader：Bean的解析主要就是对 Spring 配置文件的解析
+    1.初始化的入口在容器实现中的refresh()调用来完成
+
+    2.对Bean定义载入IOC容器使用的方法loadBeanDefinition()
+
+        大致过程：
+
+        通过ResourceLoader来完成资源文件位置的定位，DefaultResourceLoader是默认的实现，同时上下文本身给出了ResourceLoader的实现，
+        可以从类路径，文件系统，URL等方式来定位资源位置。如果是XmlBeanFactory作为IOC容器，那么需要为它指定Bean定义的资源，也就是说
+        Bean定义文件时通过抽象成Resource来被IOC容器处理的，容器通过BeanDefinitionReader来完成定义信息的解析和Bean信息的注册，往往使
+        用的是XmlBeanDefinitionReader来解析Bean的XML定义文件-实际的处理过程委托给BeanDefinitionParseDelegate来完成的，从而得到Bean的
+        定义信息，这些信息在Spring中使用BeanDefinition对象来表示-这个名字可以让我们想到loadBeanDefinition()，registerBeanDefinition()
+        这些相关方法。它们都是为处理BeanDefinition服务的，容器解析得到BeanDefinition以后，需要把它在IOC容器中注册，这由IOC实现BeanDefinitionRegistry
+        接口来实现的。注册过程就是在IOC容器内部维护一个HashMap(ConCurrentHashMap)来保存得到的BeanDefinition的过程。这个HashMap是IOC容器持有Bean信息的场所，
+        以后对Bean的操作都是围绕这个HashMap来实现的。
+        然后我们就可以通过BeanFactory和ApplicationContext来享受到spring IOC的服务了，在使用IOC容器时，我们注意到除了少量粘合代码，
+        绝大多数以正确IOC风格编写的应用程序代码完全不用关心如何到达工厂，因为容器将把这些对象与容器管理的其他对象钩在一起。基本的策略是把
+        工厂放到已知的地方，最好放在对预期使用的上下文有意义的地方，以及代码将实际访问工厂的地方。Spring本身提供了对声明式载入web应用程序
+        用法的应用程序上下文，并将其存储在ServletContext中的框架实现。
 
 
-二、DI依赖注入-关键类
+
+
+
+----------------------------------------------------------- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -----------------------------------------------------------
+----------------------------------------------------------- 源码剖析〓IOC初始化〓 -----------------------------------------------------------
+
+
+
+
+
+----------------------------------------------------------- 源码剖析〓DI依赖注入〓 -----------------------------------------------------------
+----------------------------------------------------------- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -----------------------------------------------------------
+
+
+一、DI依赖注入 - 关键类
 
 	1、IOC容器
 
@@ -114,8 +155,20 @@ gp-【课堂笔记】一步一步手绘Spring IOC运行时序图文档-问题记
 
 
 
----------------------------------------------------------------- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑ ----------------------------------------------------------------
----------------------------------------------------------------- spring源码剖析 ----------------------------------------------------------------
+二、依赖注入DI - 执行细节
+
+    1.寻找入口
+    2.开始实例化
+    3.选择实例化策略
+    4.执行实例化
+    5.准备依赖注入
+    6.解析注入规则
+    7.注入赋值
+
+
+
+----------------------------------------------------------- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -----------------------------------------------------------
+----------------------------------------------------------- 源码剖析〓DI依赖注入〓 -----------------------------------------------------------
 
 
 
