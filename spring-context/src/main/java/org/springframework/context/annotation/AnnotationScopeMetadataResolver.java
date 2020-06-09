@@ -77,6 +77,11 @@ public class AnnotationScopeMetadataResolver implements ScopeMetadataResolver {
 	//解析注解Bean定义类中的作用域元信息
 	@Override
 	public ScopeMetadata resolveScopeMetadata(BeanDefinition definition) {
+
+		// TODO：yys
+		// (yys)从源码中可以看出，annDef.getMetadata().getAnnotationAttributes()方法就是获取对象中指定类型的注 解的值
+
+
 		ScopeMetadata metadata = new ScopeMetadata();
 		if (definition instanceof AnnotatedBeanDefinition) {
 			AnnotatedBeanDefinition annDef = (AnnotatedBeanDefinition) definition;

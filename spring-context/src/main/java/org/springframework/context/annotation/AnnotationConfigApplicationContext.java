@@ -70,6 +70,14 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
+	// TODO：1、定位 Bean 扫描路径
+	// (yys)通过查看AnnotationConfigApplicationContext的构造方法，可以看到spring对注解的处理分为两种方式：
+	// (yys)1.直接将Bean注册到容器中
+	// (yys)	可以在初始化容器时注册；也可在容器创建之后(无参构造)手动调用注册方法(register())向容器注册，然后通过手动刷新(refresh())容器，使得容器对注册的注解Bean进行处理
+	// (yys)2.通过扫描指定的包及其子包下的所有类
+	// (yys)	在初始化注解容器时指定要自动扫描的路径，如果容器创建之后向给定路径动态添加了注解Bean，则需要手动调用容器扫描的方法，然后手动刷新容器，使得Bean对所注册的Bean进行处理
+
+
 	/**
 	 * Create a new AnnotationConfigApplicationContext with the given DefaultListableBeanFactory.
 	 * @param beanFactory the DefaultListableBeanFactory instance to use for this context
@@ -89,6 +97,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//最常用的构造函数，通过将涉及到的配置类传递给该构造函数，以实现将相应配置类中的Bean自动注册到容器中
 	public AnnotationConfigApplicationContext(Class<?>... annotatedClasses) {
 		this();
+
+		// TODO：2、读取 Annotation 元数据 (通过传入 注解类 的有参构造方式)
+
 		register(annotatedClasses);
 		refresh();
 	}
@@ -101,6 +112,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//该构造函数会自动扫描以给定的包及其子包下的所有类，并自动识别所有的Spring Bean，将其注册到容器中
 	public AnnotationConfigApplicationContext(String... basePackages) {
 		this();
+
+		// TODO：3、扫描指定包并解析为 BeanDefinition (通过传入 给定的包及其子包 的有参构造方式)
+
 		scan(basePackages);
 		refresh();
 	}
@@ -165,6 +179,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//refresh()方法刷新容器，触发容器对新注册的Bean的处理
 	public void register(Class<?>... annotatedClasses) {
 		Assert.notEmpty(annotatedClasses, "At least one annotated class must be specified");
+
+		// TODO：2-1、AnnotationConfigApplicationContext 通过调用注解 Bean 定义读取器
+		// (yys)AnnotatedBeanDefinitionReader 的 register()方法向容器注册指定的注解 Bean
+
 		this.reader.register(annotatedClasses);
 	}
 

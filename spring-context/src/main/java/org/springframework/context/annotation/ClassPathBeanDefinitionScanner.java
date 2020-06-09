@@ -254,6 +254,9 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		//获取容器中已经注册的Bean个数
 		int beanCountAtScanStart = this.registry.getBeanDefinitionCount();
 
+		// TODO：3-1、ClassPathBeanDefinitionScanner 扫描给定的包及其子包
+		// (yys)AnnotationConfigApplicationContext 通 过 调 用 类 路 径 Bean 定 义 扫 描 器 ClassPathBeanDefinitionScanner 扫描给定包及其子包下的所有类
+
 		//启动扫描器扫描给定包
 		doScan(basePackages);
 
@@ -283,8 +286,13 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		//遍历扫描所有给定的包
 		for (String basePackage : basePackages) {
 			//调用父类ClassPathScanningCandidateComponentProvider的方法
+
+			// TODO：yys
+			// (yys)类路径 Bean 定义扫描器 ClassPathBeanDefinitionScanner 主要通过findCandidateComponents()方法调用其父类 ClassPathScanningCandidateComponentProvider 类来扫描获取给定包及其子包下的类
+
 			//扫描给定类路径，获取符合条件的Bean定义
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
+
 			//遍历扫描到的Bean
 			for (BeanDefinition candidate : candidates) {
 				//获取Bean定义类中@Scope注解的值，即获取Bean的作用域
