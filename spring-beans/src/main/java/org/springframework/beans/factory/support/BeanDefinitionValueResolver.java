@@ -91,6 +91,11 @@ class BeanDefinitionValueResolver {
 	 * @param value the value object to resolve
 	 * @return the resolved object
 	 */
+
+	// TODO：6、解析属性注入规则
+	// (yys)当容器在对属性进行依赖注入时，如果发现属性值需要进行类型转换，如属性值是容器中另一个 Bean 实例对象的引用，
+	// (yys)则容器首先需要根据属性值解析出所引用的对象，然后才能将该引用对象注入到目标 实例对象的属性上去，对属性进行解析的由 resolveValueIfNecessary()方法实现
+
 	//解析属性值，对注入类型进行转换
 	@Nullable
 	public Object resolveValueIfNecessary(Object argName, @Nullable Object value) {

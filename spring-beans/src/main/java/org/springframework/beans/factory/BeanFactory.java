@@ -126,6 +126,18 @@ public interface BeanFactory {
 	String FACTORY_BEAN_PREFIX = "&";
 
 
+	// TODO：1、寻找获取Bean的入口
+	// (yys)BeanFactory接口定义了Spring IOC容器的基本功能规范，是Spring IOC容器所应遵守的最底层和最基本的编程规范
+	// (yys)BeanFactory定义了几个getBean()方法，就是用户向IOC容器索取管理Bean的方法，我们通过分析其子类的具体实现，理解SpringIOC容器在用户索取Bean时如何完成依赖注入
+	// (yys)其getBean()具体实现在其子类 【AbstractBeanFactory】中
+
+	// (yys) getBean(String name)：根据bean的名字获取bean实例
+	// (yys) getBean(String name, @Nullable Class<T> requiredType)：根据bean的名字和Class类型来得到bean实例，增加了类型安全验证机制
+	// (yys) getBean(String name, Object... args)：
+	// (yys) getBean(Class<T> requiredType)：根据Class类型来得到bean实例
+	// (yys) getBean(Class<T> requiredType, Object... args)：
+
+
 	/**
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * <p>This method allows a Spring BeanFactory to be used as a replacement for the

@@ -60,6 +60,10 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 	//使用初始化策略实例化Bean对象
 	@Override
 	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
+
+		// TODO：yys
+		// (yys)通过源码分析，可以看到如果Bean有方法被覆盖，则使用JDK反射进行实例化，反之，使用CGLib进行实例化
+
 		// Don't override the class with CGLIB if no overrides.
 		//如果Bean定义中没有方法覆盖，则就不需要CGLIB父类类的方法
 		if (!bd.hasMethodOverrides()) {
@@ -94,6 +98,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
+
+			// TODO：yys
+			// (yys)instantiateWithMethodInjection()方法调用 SimpleInstantiationStrategy的子类CGLibSubclassingInstantiationStrategy使用CGLib来进行初始化
+			// (yys)CGLib 是一个常用的字节码生成器的类库，它提供了一系列 API 实现 Java 字节码的生成和转换功能。
+			// (yys)我们在学习JDK的动态代理时都知道，JDK的动态代理只能针对接口，如果一个类没有实现任何接口，要对其进行动态代理只能使用 CGLib
+
 			// Must generate CGLIB subclass.
 			//使用CGLIB来实例化对象
 			return instantiateWithMethodInjection(bd, beanName, owner);

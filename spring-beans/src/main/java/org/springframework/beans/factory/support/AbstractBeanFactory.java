@@ -202,6 +202,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
 
+
+		// TODO：yys
+		// (yys)通过源码分析，我们看到spring中定义，如果Bean定义的单例模式(Singleton)，则容器在创建之前先从缓存中查找，
+		// (yys)以确保整个容器中只存在一个实例对象。如果Bean定义的是原型模式(Prototype)，则容器每次都会创建一个新的实例对象。
+		// (yys)除此之外，Bean定义还可以扩展为指定其生命周期范围
+
+		// (yys)代码中只是定义了根据Bean定义的模式，采取的不同创建Bean实例对象的策略，具体的Bean实例对象的创建过程由实现了
+		// (yys)ObjectFactory接口的匿名内部类的 createBean()方法完成，ObjectFactory使用委派模式，具体的Bean实例创建过程交由
+		// (yys)实现类AbstractAutowireCapableBeanFactory完成
+
+
 		//根据指定的名称获取被管理Bean的名称，剥离指定名称中对容器的相关依赖
 		//如果指定的是别名，将别名转换为规范的Bean名称
 		final String beanName = transformedBeanName(name);

@@ -466,6 +466,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * populates the bean instance, applies post-processors, etc.
 	 * @see #doCreateBean
 	 */
+
+	// TODO：2、开始实例化
+	// (yys)AbstractAutowireCapableBeanFactory类实现了ObjectFactory接口，创建容器指定的Bean实例对象，同时还对创建的Bean实例对象进行初始化处理
+
 	//创建Bean实例对象
 	@Override
 	protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
@@ -510,8 +514,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+
+			// TODO：yys
+			// (yys) doCreateBean() 真正创建Bean的方法
+
 			//创建Bean的入口
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("Finished creating instance of bean '" + beanName + "'");
 			}
@@ -549,15 +558,25 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final @Nullable Object[] args)
 			throws BeanCreationException {
 
+		// TODO：yys
+		// (yys)通过源码分析，我们看到具体的依赖注入实现在以下两个方法中
+		// (yys)createBeanInstance()方法，生成 Bean 所包含的 java 对象实例
+		// (yys)populateBean()方法，对 Bean 属性的依赖注入进行处理
+
 		// Instantiate the bean.
 		//封装被创建的Bean对象
 		BeanWrapper instanceWrapper = null;
 		if (mbd.isSingleton()) {
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
+
+		// TODO：3、选择 Bean 实例化策略
+		// (yys)createBeanInstance(beanName, mbd, args)：生成 Bean 所包含的 java 对象实例
+
 		if (instanceWrapper == null) {
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
+
 		final Object bean = instanceWrapper.getWrappedInstance();
 		//获取实例化对象的类型
 		Class<?> beanType = instanceWrapper.getWrappedClass();
@@ -599,8 +618,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		//这个exposedObject在初始化完成之后返回作为依赖注入完成后的Bean
 		Object exposedObject = bean;
 		try {
+
+			// TODO：5、准备依赖注入
+			// (yys)Bean的依赖注入主要分为两个步骤，首先调用createBeanInstance()方法生成Bean所包含的Java对象实例。
+			// (yys)然后，调用populateBean()方法，对Bean属性的依赖注入进行处理。上面我们已经分析了容器初始化生成Bean所包含的Java实例对象的过程，
+			// (yys)现在我们继续分析生成对象后，Spring IOC容器是如何将Bean的属性依赖关系注入Bean实例对象中并设置好的，
+			// (yys)回到 AbstractAutowireCapableBeanFactory 的 populateBean()方法 pao piu lei ta
+			// (yys)populateBean(beanName, mbd, instanceWrapper)：对 Bean 属性的依赖注入进行处理
+
 			//将Bean实例对象封装，并且Bean定义中配置的属性值赋值给实例对象
 			populateBean(beanName, mbd, instanceWrapper);
+
 			//初始化Bean对象
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
@@ -1112,6 +1140,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	//创建Bean的实例对象
 	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
+
+		// TODO：yys
+		// (yys)在createBeanInstance()方法中，根据指定的初始化策略，使用简单工厂、工厂方法或者容器的自动装配特性生成 Java 实例对象
+		// (yys)经过对代码分析，我们可以看出，对使用工厂方法和自动装配特性的 Bean 的实例化相当比较清楚，调用相应的工厂方法或者参数匹配
+		// (yys)的构造方法即可完成实例化对象的工作。但是对于我们最常使用 的默认无参构造方法就需要使用相应的初始化策略(JDK 的反射机制或者 CGLib)
+		// (yys)来进行初始化了，在instantiateBean方法中的 getInstantiationStrategy().instantiate()中就具体实现类使用初始策略实例化对象
+
 		// Make sure bean class is actually resolved at this point.
 		//检查确认Bean是可实例化的
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
@@ -1144,6 +1179,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 		}
+
+		// TODO：yys
+		// (yys) instantiateBean(beanName, mbd)
+
 		if (resolved) {
 			if (autowireNecessary) {
 				//配置了自动装配属性，使用容器的自动装配实例化
@@ -1264,6 +1303,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						getAccessControlContext());
 			}
 			else {
+
+				// TODO：4、执行 Bean 实例化
+				// (yys)在使用默认的无参构造方法创建Bean的实例化对象时，方法getInstantiationStrategy().instantiate()
+				// (yys)调用了SimpleInstantiationStrategy类中的实例化Bean的方法
+
 				//将实例化的对象封装起来
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
 			}
@@ -1324,6 +1368,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 	//将Bean属性设置到生成的实例对象上
 	protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) {
+
+		// TODO：yys
+		// (yys)分析代码，可以看出对属性的注入过程分以下两种情况：
+		// (yys) 1.属性值类型不需要强制转换时，不需要解析属性值，直接准备进行依赖注入
+		// (yys) 2.属性值需要进行类型强制转换时，如对其他对象的引用等，首先需要解析属性值，然后对解析后的属性值进行依赖注入
+		// (yys)  对属性值的解析是在BeanDefinitionValueResolver类中的resolveValueIfNecessary()方法中进行的，
+		// (yys)  对属性值的依赖注入是通过 bw.setPropertyValues()方法实现的，在分析属性值的依赖注入之前，我们 先分析一下对属性值的解析过程
+
 		if (bw == null) {
 			if (mbd.hasPropertyValues()) {
 				throw new BeanCreationException(
@@ -1403,6 +1455,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				checkDependencies(beanName, mbd, filteredPds, pvs);
 			}
 		}
+
+		// TODO：yys
+		// (yys)applyPropertyValues(beanName, mbd, bw, pvs)
 
 		if (pvs != null) {
 			//对属性进行注入
@@ -1650,6 +1705,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// TODO：yys
+		// (yys) bw.setPropertyValues(mpvs)：对属性值的解析
+
 		if (pvs instanceof MutablePropertyValues) {
 			mpvs = (MutablePropertyValues) pvs;
 			//属性值已经转换
@@ -1695,8 +1753,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				String propertyName = pv.getName();
 				//原始的属性值，即转换之前的属性值
 				Object originalValue = pv.getValue();
+
+				// TODO：yys
+				// (yys) valueResolver.resolveValueIfNecessary(pv, originalValue)：对属性值的依赖注入
+
 				//转换属性值，例如将引用转换为IOC容器中实例化对象引用
 				Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
+
 				//转换之后的属性值
 				Object convertedValue = resolvedValue;
 				//属性值是否可以转换
