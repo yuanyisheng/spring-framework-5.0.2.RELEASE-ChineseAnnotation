@@ -62,7 +62,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
 
 		// TODO：yys
-		// (yys)通过源码分析，可以看到如果Bean有方法被覆盖，则使用JDK反射进行实例化，反之，使用CGLib进行实例化
+		// (yys)通过源码分析，可以看到如果Bean没有方法被覆盖，则使用JDK反射进行实例化，反之，使用CGLib进行实例化
 
 		// Don't override the class with CGLIB if no overrides.
 		//如果Bean定义中没有方法覆盖，则就不需要CGLIB父类类的方法

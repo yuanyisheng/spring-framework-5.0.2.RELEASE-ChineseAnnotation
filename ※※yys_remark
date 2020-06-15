@@ -10,6 +10,13 @@
 --
 --        AbstractRefreshableConfigApplicationContext 改为 AbstractRefreshableApplicationContext
 --
+--
+--gp-【课堂笔记】一步一步手绘Spring DI运行时序图文档-问题记录：
+--
+--执行 Bean 实例化
+--
+--      改为：如果 Bean 有方法被覆盖了，则使用 CGLib 的反射机制进行实例化，否 则，使用 JDK 进行实例化
+--
 ----------------------------------------------------------- 对应文档问题记录 -----------------------------------------------------------
 
 
@@ -170,11 +177,24 @@
 
     2.开始实例化
 
+        通过上面的源码注释，我们看到具体的依赖注入实现其实就在以下两个方法中:
+            1)、createBeanInstance()方法，生成 Bean 所包含的 java 对象实例
+            2)、populateBean()方法，对 Bean 属性的依赖注入进行处理
+
     3.选择实例化策略
+
+        在 createBeanInstance()方法中，根据指定的初始化策略，使用简单工厂、工厂方法或者容器的自动装 配特性生成 Java 实例对象
+        1)、对使用工厂方法和自动装配特性的 Bean 的实例化相当比较清 楚，调用相应的工厂方法或者参数匹配的构造方法即可完成实例化对象的工作
+        2)、对于我们最常使用 的默认无参构造方法就需要使用相应的初始化策略(JDK 的反射机制或者 CGLib)来进行初始化了，在方 法 getInstantiationStrategy().instantiate()中就具体实现类使用初始策略实例化对象
 
     4.执行实例化
 
+        在使用默认的无参构造方法创建 Bean 的实例化对象时，方法 getInstantiationStrategy().instantiate() 调用了 SimpleInstantiationStrategy 类中的实例化 Bean 的方法
+        如果 Bean 有方法被覆盖了，则使用 CGLib 的反射机制进行实例化，否 则，使用 JDK 进行实例化
+
     5.准备依赖注入
+
+        调用 populateBean()方法，对 Bean 属性的依赖注入 进行处理
 
     6.解析注入规则
 

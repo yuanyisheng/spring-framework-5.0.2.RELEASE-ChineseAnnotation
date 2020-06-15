@@ -86,6 +86,10 @@ public abstract class AbstractPropertyAccessor extends TypeConverterSupport impl
 	public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, boolean ignoreInvalid)
 			throws BeansException {
 
+		// TODO：7、注入赋值
+		// (yys)BeanWrapperImpl类主要是对容器中完成初始化的Bean实例对象进行属性的依赖注入，即将Bean对象设置到它所依赖的另一个Bean的属性中。
+		// (yys)然而，BeanWrapperImpl中的注入方法实际上由AbstractnestablePropertyAccessor来实现的
+
 		List<PropertyAccessException> propertyAccessExceptions = null;
 		List<PropertyValue> propertyValues = (pvs instanceof MutablePropertyValues ?
 				((MutablePropertyValues) pvs).getPropertyValueList() : Arrays.asList(pvs.getPropertyValues()));
@@ -94,6 +98,10 @@ public abstract class AbstractPropertyAccessor extends TypeConverterSupport impl
 				// This method may throw any BeansException, which won't be caught
 				// here, if there is a critical failure such as no matching field.
 				// We can attempt to deal only with less serious exceptions.
+
+				// TODO：yys
+				// (yys)setPropertyValue(pv);
+
 				setPropertyValue(pv);
 			}
 			catch (NotWritablePropertyException ex) {

@@ -94,7 +94,11 @@ class BeanDefinitionValueResolver {
 
 	// TODO：6、解析属性注入规则
 	// (yys)当容器在对属性进行依赖注入时，如果发现属性值需要进行类型转换，如属性值是容器中另一个 Bean 实例对象的引用，
-	// (yys)则容器首先需要根据属性值解析出所引用的对象，然后才能将该引用对象注入到目标 实例对象的属性上去，对属性进行解析的由 resolveValueIfNecessary()方法实现
+	// (yys)则容器首先需要根据属性值解析出所引用的对象，然后才能将该引用对象注入到目标实例对象的属性上去，对属性进行解析的由 resolveValueIfNecessary()方法实现
+
+	// (yys)分析代码，我们明白Spring是如何将引用类型，内部类以及集合类型等属性进行解析的，属性值解析完成后就可以进行依赖注入了，
+	// (yys)依赖注入的过程就是Bean对象实例设置到所依赖的Bean对象属性上去。而真正的依赖注入是通过bw.setPropertyValues()方法实现的，
+	// (yys)该方法也使用委派模式，在BeanWrapper接口中至少定义了方法声明，依赖注入的具体实现交由其实现类BeanWrapperImpl来完成。
 
 	//解析属性值，对注入类型进行转换
 	@Nullable
@@ -104,6 +108,10 @@ class BeanDefinitionValueResolver {
 		//对引用类型的属性进行解析
 		if (value instanceof RuntimeBeanReference) {
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
+
+			// TODO：yys
+			// (yys)resolveReference(argName, ref);
+
 			//调用引用类型属性的解析方法
 			return resolveReference(argName, ref);
 		}
@@ -159,6 +167,10 @@ class BeanDefinitionValueResolver {
 					elementType = Object.class;
 				}
 			}
+
+			// TODO：yys
+			// (yys)resolveManagedArray(argName, (List<?>) value, elementType);
+
 			//创建指定类型的数组
 			return resolveManagedArray(argName, (List<?>) value, elementType);
 		}

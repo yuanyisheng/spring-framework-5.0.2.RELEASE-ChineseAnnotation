@@ -251,6 +251,10 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			if (nestedPa == this) {
 				pv.getOriginalPropertyValue().resolvedTokens = tokens;
 			}
+
+			// TODO：yys
+			// (yys)setPropertyValue(tokens, pv);
+
 			nestedPa.setPropertyValue(tokens, pv);
 		}
 		else {
@@ -261,6 +265,10 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 	//实现属性依赖注入功能
 	protected void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {
 		if (tokens.keys != null) {
+
+			// TODO：yys
+			// (yys)processKeyedProperty(tokens, pv);
+
 			processKeyedProperty(tokens, pv);
 		}
 		else {
@@ -271,6 +279,15 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 	//实现属性依赖注入功能
 	@SuppressWarnings("unchecked")
 	private void processKeyedProperty(PropertyTokenHolder tokens, PropertyValue pv) {
+
+		// TODO：yys
+		// (yys)通过代码分析，我们已经明白了 Spring IOC 容器是如何将属性的值注入到 Bean 实 例对象中去的：
+		// (yys) 1.对于集合类型的属性，将其属性值解析为目标类型的集合后直接赋值给属性
+		// (yys) 2.对于非集合类型的属性，大量使用JDK反射机制，通过属性的getter()方法获取指定属性注入以前的值，
+		// (yys)   同时调用属性的setter()方法为属性设置注入后的值。
+
+		// (yys)getPropertyHoldingValue(tokens);
+
 		//调用属性的getter方法，获取属性的值
 		Object propValue = getPropertyHoldingValue(tokens);
 		PropertyHandler ph = getLocalPropertyHandler(tokens.actualName);
